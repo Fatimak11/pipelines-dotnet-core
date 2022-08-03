@@ -19,7 +19,7 @@ pipeline {
         stage('Restore') {
             steps {
 
-                sh "dotnet restore"
+                sh "dotnet test --logger:junit"
 
             }
         }
@@ -27,42 +27,23 @@ pipeline {
         stage('Build') {
             steps {
                 
-                sh "dotnet build"
-
-            }
-        }
-
-        stage('Test') {
-            steps {
-                
-                sh "dotnet test"
-
-            }
-
-        }
-
-       
-        stage('Package') {
-            steps {
-                
                 sh "dotnet publish"
 
             }
-
-            post {
-                success {
-                    archiveArtifacts artifacts: 'bin/Debug/net6.0/pipelines-dotnet-core.dll', followSymlinks: false
-       
+            post{
+                success{
+                    archiveArtifacts artifacts: '**/bin/Debug/net6.0/**.dll', followSymlinks: false
                 }
             }
         }
-
+       
+        
         stage('Publish artefacts to S3 Bucket') {
             steps {
 
                 sh "aws configure set region us-east-1"
 
-                sh "aws s3 cp ./target/**.war s3://$AWS_S3_BUCKET/$ARTIFACT_NAME"
+                sh "aws s3 cp ./bin/Debug/net6.0/**.dll s3://$AWS_S3_BUCKET/$ARTIFACT_NAME"
                 
             }
         }

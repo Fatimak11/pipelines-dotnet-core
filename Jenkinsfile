@@ -7,13 +7,11 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('Access-key-ID')
         AWS_SECRET_ACCESS_KEY = credentials('Secret-access-key')
 
-        AWS_S3_BUCKET = "artifact-java-app"
+        AWS_S3_BUCKET = "dotnet-app"
         ARTIFACT_NAME = "helloworld.war"
-        AWS_EB_APP_NAME = "java-app"
+        AWS_EB_APP_NAME = "dotnet-app"
         AWS_EB_APP_VERSION = "${BUILD_ID}"
-        AWS_EB_ENVIRONMENT = "Javaapp-env"
-
-        
+        AWS_EB_ENVIRONMENT = "Dotnetapp-env"
 
     }
 
@@ -64,7 +62,7 @@ pipeline {
 
                 sh "aws configure set region us-east-1"
 
-                sh "aws s3 cp ../**.war s3://$AWS_S3_BUCKET/$ARTIFACT_NAME"
+                sh "aws s3 cp ./target/**.war s3://$AWS_S3_BUCKET/$ARTIFACT_NAME"
                 
             }
         }

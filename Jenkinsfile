@@ -18,20 +18,18 @@ pipeline {
     }
 
     stages {
-        stage('Validate') {
+        stage('Restore') {
             steps {
-                
-                sh "mvn validate"
 
-                sh "mvn clean"
+                sh "dotnet restore"
 
             }
         }
 
-         stage('Build') {
+        stage('Build') {
             steps {
                 
-                sh "mvn compile"
+                sh "dotnet build"
 
             }
         }
@@ -39,31 +37,24 @@ pipeline {
         stage('Test') {
             steps {
                 
-                sh "mvn test"
+                sh "dotnet test"
 
             }
 
-            post {
-                always {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                }
-            }
         }
 
-        
-
+       
         stage('Package') {
             steps {
                 
-                sh "mvn package"
+                sh "dotnet publish"
 
             }
 
             post {
                 success {
-                    archiveArtifacts artifacts: '**/target/**.war', followSymlinks: false
-
-                   
+                    archiveArtifacts artifacts: 'bin/Debug/net6.0/pipelines-dotnet-core.dll', followSymlinks: false
+       
                 }
             }
         }
@@ -89,5 +80,6 @@ pipeline {
             }
         }
         
+          
     }
 }
